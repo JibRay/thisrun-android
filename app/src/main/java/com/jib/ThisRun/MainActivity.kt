@@ -47,13 +47,33 @@ class MainActivity : ComponentActivity() {
                         modifier = Modifier.fillMaxWidth(), content = {
                             // This column contains displayed values.
                             Column() {
-                                // This row contains last-mile and run pace.
+                                // This row contains last mile pace and average pace.
                                 Row(modifier = Modifier.fillMaxWidth()) {
                                     Column(modifier = Modifier.weight(1f).fillMaxWidth()) {
-                                        TimeValue("Last Mile", "14.15")
+                                        DisplayMinutesSeconds("Last Mile", 965.0)
                                     }
                                     Column(modifier = Modifier.weight(1f).fillMaxWidth()) {
-                                        TimeValue("Run Pace", "16.20")
+                                        DisplayMinutesSeconds("Average Pace", 861.0)
+                                    }
+                                }
+
+                                // This row contains elapse time and estimated time to finish.
+                                Row(modifier = Modifier.fillMaxWidth()) {
+                                    Column(modifier = Modifier.weight(1f).fillMaxWidth()) {
+                                        DisplayHoursMinutesSeconds("Elapsed Time", 3681.0)
+                                    }
+                                    Column(modifier = Modifier.weight(1f).fillMaxWidth()) {
+                                        DisplayHoursMinutesSeconds("Finish Time", 12658.0)
+                                    }
+                                }
+
+                                // This row contains walking pace and running pace.
+                                Row(modifier = Modifier.fillMaxWidth()) {
+                                    Column(modifier = Modifier.weight(1f).fillMaxWidth()) {
+                                        DisplayMinutesSeconds("Walking Pace", 965.0)
+                                    }
+                                    Column(modifier = Modifier.weight(1f).fillMaxWidth()) {
+                                        DisplayMinutesSeconds("Running Pace", 861.0)
                                     }
                                 }
                             }
@@ -66,8 +86,14 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+// Display a time value as minutes:seconds. valueLabel is displayed along the top. value
+// is in seconds.
 @Composable
-fun TimeValue(valueLabel: String, value: String) {
+fun DisplayMinutesSeconds(valueLabel: String, value: Double) {
+    val t = (value + 0.5).toInt()
+    val minutes = t / 60
+    val seconds = t % 60
+    val valueText = String.format("%02d:%02d", minutes, seconds)
     Column(modifier = Modifier.border(BorderStroke(3.dp, Color.Blue)).fillMaxWidth(),
            horizontalAlignment = Alignment.CenterHorizontally) {
         Text(
@@ -75,7 +101,28 @@ fun TimeValue(valueLabel: String, value: String) {
             fontWeight = FontWeight.Bold,
         )
         Text(
-            value, fontSize = 35.sp,
+            valueText, fontSize = 35.sp,
+            fontWeight = FontWeight.Bold,
+        )
+    }
+}
+
+@Composable
+fun DisplayHoursMinutesSeconds(valueLabel: String, value: Double) {
+    var t = (value + 0.5).toInt()
+    val hours = t / 3600
+    t -= hours * 3600
+    val minutes = t / 60
+    val seconds = t % 60
+    val valueText = String.format("%2d:%02d:%02d", hours, minutes, seconds)
+    Column(modifier = Modifier.border(BorderStroke(3.dp, Color.Blue)).fillMaxWidth(),
+        horizontalAlignment = Alignment.CenterHorizontally) {
+        Text(
+            valueLabel, fontSize = 20.sp,
+            fontWeight = FontWeight.Bold,
+        )
+        Text(
+            valueText, fontSize = 35.sp,
             fontWeight = FontWeight.Bold,
         )
     }
